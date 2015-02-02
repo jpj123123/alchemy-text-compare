@@ -7,6 +7,7 @@
     <title>Goog Product Table</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel='stylesheet' href='public/css/app.min.css' />
+    <link rel='stylesheet' href='/boom/global/public/css/app.min.css' />
 </head>
 <body>
 
@@ -14,6 +15,14 @@
 
     <div class='container' ng-controller='split'>
         <div class='row'>
+            <div class='col-md-12'>
+                <h1>CHRYSUS Literary Content Analyser</h1>
+                <p class='wiki-def'><strong>Chrysus</strong> (Greek: Χρύσος; aka Khrysos) in Greek mythology is the spirit (daimon) of gold.</p>
+            </div>
+        </div>
+
+        <div class='row'>
+            <h3 class='col-xs-12'>Comparison</h3>
             <div ng-repeat='i in getNumber(nPages) track by $index' class='col-sm-6'>
                 <form class='data-input' ng-submit='alchemy($index)'>
                     <div class="form-group">
@@ -30,8 +39,8 @@
         </center>
 
         <div class='row'>
+            <h3 class='col-xs-12'>Alchemy results</h3>
             <article ng-repeat='i in getNumber(nPages) track by $index' class='data-output col-sm-6'>
-                <h3>Alchemy results</h3>
                 <section ng-repeat='(property, data) in page[$index].data'>
                     <h4>{{property}}</h4>
                     <ul>
