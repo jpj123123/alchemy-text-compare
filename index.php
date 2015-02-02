@@ -42,15 +42,39 @@
             <h3 class='col-xs-12'>Alchemy results</h3>
         </div>
 
-        <article class='metric-row row' ng-repeat='metric in metrics'>
-            <h4 class='metric-row__name col-xs-12'>{{metric.name | capitalize}}</h4>
-            <section ng-repeat='i in getNumber(nPages) track by $index' class='metric-row__set data-output col-sm-6'>
-                <ul class='metric-row__list'>
-                    <li class='metric-row__item' ng-repeat='(property, data) in page[$index].data[metric.name]'>
-                        {{data}}
-                    </li>
-                </ul>
-            </section>
+        <article class='metric-row panel panel-default' ng-repeat='metric in metrics'>
+            <header class='panel-heading'>
+                <h4 class='metric-row__name panel-title center'>{{metric.name | capitalize}}</h4>
+            </header>
+            <div class='panel-body row'>
+                <section ng-repeat='i in getNumber(nPages) track by $index' class='metric-row__set data-output col-sm-6'>
+                    <!--
+                        introduce a bit of display logic at this point
+                    -->
+
+                    <!-- ?=> MOST METRICS -->
+                    <!-- <table ng-if='metric.name != "relations"' class="table">
+                        <tr ng-repeat='(property, data) in page[$index].data[metric.name]'>
+                            <td>{{data.text}}</td>
+                        </tr>
+                    </table> -->
+
+                    <!-- ?=> RELATIONS -->
+                    <!-- <table ng-if='metric.name == "relations"' class="table">
+                        <tr ng-repeat='(property, data) in page[$index].data[metric.name]'>
+                            <td>{{data}}</td>
+                        </tr>
+                    </table> -->
+
+                    <!-- data view -->
+                    <table class="table">
+                        <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
+                            <td>{{data}} <span class='label' style='background: {{data.type | strToHSL}};'>{{data.type}}</span></td>
+                        </tr>
+                    </table>
+
+                </section>
+            </div>
         </article>
 
     </div>

@@ -27,8 +27,8 @@ angular.module('alchemy',[])
         return new Array(num);
     }
     $scope.page = [
-        { url: "http://www.theguardian.com/uk",data: {} },
-        { url: "http://www.telegraph.co.uk/",data: {} }
+        { url: "http://en.wikipedia.org/wiki/Refrigerator", data: {} },
+        { url: "http://www.appliancecity.co.uk/products/fridges-and-freezers/", data: {} }
     ]
 
     $scope.alchemy = function(i,callback) {
@@ -37,7 +37,8 @@ angular.module('alchemy',[])
         _.each($scope.metrics, function(metric) {
             $scope.AlchemyApi(page.url, metric, function(res) {
               $scope.$apply(function(){
-                $scope.page[i].data[res.metric] = res.data;
+                $scope.page[i].data[res.metric] = {};
+                $scope.page[i].data[res.metric].raw = res.data;
                 if(Object.keys($scope.page[i].data).length == $scope.metrics.length) {
                   console.log("Finished analysing "+$scope.page[i].url);
                   if(callback) callback();
@@ -52,19 +53,20 @@ angular.module('alchemy',[])
       _.each(new Array($scope.nPages), function(p,i) {
         $scope.alchemy(i,function() {
           if(i+1 == $scope.nPages) {
-            carryOn();
+            onAlchemyDataLoaded();
           }
         })
       });
 
       // Find similarities and differences
-      function carryOn() {
-        console.log("Starting comparison analysis")
+      function onAlchemyDataLoaded() {
+        console.log(JSON.stringify($scope.page));
+        // console.log("Starting comparison analysis");
         _.each($scope.metrics, function(metric) {
-          console.log(
-            $scope.page[0].data[metric.name],
-            $scope.page[1].data[metric.name]
-          );
+
+          $scope.identical[metric.name] = "";
+          $scope.page[0].data[metric.name].unique = "";
+
           // $scope.intersection = _.intersection(
           //                         $scope.page[0].data[metric.name],
           //                         $scope.page[1].data[metric.name]
@@ -73,8 +75,6 @@ angular.module('alchemy',[])
           //                         $scope.page[0].data[metric.name],
           //                         $scope.page[1].data[metric.name]
           //                       );
-          console.log("====\n"+metric.name)
-          console.log($scope.intersection,$scope.difference);
         })
       }
     }
@@ -108,4 +108,26 @@ angular.module('alchemy',[])
   return function(input, all) {
     return (!!input) ? input.replace(/([^\W_]+[^\s-]*) */g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) : '';
   }
+})
+.filter('strToHSL', function() {
+  return function(input, all) {
+    return intToHSL(getHashCode(input))
+  }
 });
+
+function strToHSL(value) {
+    return intToHSL(getHashCode(value));
+}
+function getHashCode(str) {
+    var hash = 0;
+    if (str.length == 0) return hash;
+    for (var i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+};
+function intToHSL(int) {
+    var shortened = int % 360;
+    return "hsl(" + shortened + ",100%,30%)";
+};
