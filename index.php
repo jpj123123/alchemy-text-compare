@@ -40,15 +40,18 @@
 
         <div class='row'>
             <h3 class='col-xs-12'>Alchemy results</h3>
-            <article ng-repeat='i in getNumber(nPages) track by $index' class='data-output col-sm-6'>
-                <section ng-repeat='(property, data) in page[$index].data'>
-                    <h4>{{property}}</h4>
-                    <ul>
-                        <li ng-repeat='item in data'>{{item}}</li>
-                    </ul>
-                </section>
-            </article>
         </div>
+
+        <article class='metric-row row' ng-repeat='metric in metrics'>
+            <h4 class='metric-row__name col-xs-12'>{{metric.name | capitalize}}</h4>
+            <section ng-repeat='i in getNumber(nPages) track by $index' class='metric-row__set data-output col-sm-6'>
+                <ul class='metric-row__list'>
+                    <li class='metric-row__item' ng-repeat='(property, data) in page[$index].data[metric.name]'>
+                        {{data}}
+                    </li>
+                </ul>
+            </section>
+        </article>
 
     </div>
 
