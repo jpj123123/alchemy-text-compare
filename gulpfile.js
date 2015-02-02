@@ -65,10 +65,12 @@ gulp.task('misc', function() {
   // Project JS
   gulp.task('js', function() {
     gulp.src(dirs.dev.js)
-    .pipe(plugins.concat('app'))
     .pipe(plugins.size({showFiles: true}))
-    .pipe(plugins.uglify({mangle: false}))
+    .pipe(plugins.sourcemaps.init())
+      .pipe(plugins.concat('app'))
+      .pipe(plugins.uglify({mangle: false}))
     .pipe(plugins.rename({suffix: '.min.js'}))
+    .pipe(plugins.sourcemaps.write('.'))
     .pipe(plugins.size({showFiles: true}))
     .pipe(gulp.dest(dirs.prod.scripts))
     .on('error', function(error) { errorHandler(error) })
