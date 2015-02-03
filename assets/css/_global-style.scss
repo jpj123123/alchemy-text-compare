@@ -1,0 +1,60 @@
+.entity-type {
+    float: right;
+}
+
+//////// RELATIONS
+
+.rel-item {
+  display: inline-block;
+  position: relative;
+  padding: 4px 5px;
+  margin: 10px 0 1px;
+  border: 2px solid hsl(90,80%,60%);
+  border-radius: 3px;
+  vertical-align: -30%;
+  text-align: center;
+}
+.rel-subject {
+  border: 2px solid hsl(160,80%,60%);
+}
+.rel-action {
+  border: 2px solid hsl(10,80%,60%);
+}
+.rel-item__string {
+    color: hsl(90,100%,10%);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+td:hover * {
+    max-width: none;
+    white-space: initial;
+}
+.rel-item__caption {
+  position: absolute;
+  bottom: 110%;
+  left: 0;
+  width: 100%;
+  color: #777;
+  font-size: 60%;
+  font-weight: bold;
+}
+.rel-arrow {
+  display: inline-block;
+  width: 10px;
+  height: 7px;
+  position: relative;
+}
+.rel-arrow:before {
+  position: absolute;
+  top: 50%;
+  transform: translate(0,-50%);
+  content: "";
+  display: block;
+  vertical-align: middle;
+  border: 7px solid transparent;
+  border-left: 10px solid hsl(90,40%,60%);
+}
