@@ -11,27 +11,42 @@
   margin: 10px 0 1px;
   border: 2px solid hsl(90,80%,60%);
   border-radius: 3px;
-  vertical-align: -30%;
+  vertical-align: middle;
   text-align: center;
+  max-width: 120px;
+    white-space: nowrap;
+    // overflow: hidden;
+    text-overflow: ellipsis;
 }
 .rel-subject {
-  border: 2px solid hsl(160,80%,60%);
+  border-color: hsl(160,80%,60%);
 }
 .rel-action {
-  border: 2px solid hsl(10,80%,60%);
+  border-color: hsl(10,80%,60%);
+}
+.rel-location {
+  border-color: hsl(190,80%,60%);
 }
 .rel-item__string {
     color: hsl(90,100%,10%);
     font-size: 12px;
     font-weight: 700;
     white-space: nowrap;
-    max-width: 130px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-td:hover * {
-    max-width: none;
-    white-space: initial;
+[alchemy] td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    &, * {
+      max-width: none;
+      white-space: initial;
+      overflow: visible;
+    }
+  }
 }
 .rel-item__caption {
   position: absolute;
@@ -47,14 +62,14 @@ td:hover * {
   width: 10px;
   height: 7px;
   position: relative;
+  vertical-align: middle;
 }
 .rel-arrow:before {
   position: absolute;
   top: 50%;
-  transform: translate(0,-50%);
+  transform: translate(0,-25%);
   content: "";
   display: block;
-  vertical-align: middle;
   border: 7px solid transparent;
   border-left: 10px solid hsl(90,40%,60%);
 }

@@ -15,12 +15,13 @@ angular.module('alchemy',[])
 
     _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
 
+    $scope.relThreshold = 0.2;
     $scope.nPages = 2;
     $scope.metrics = [
-        { name: "entities", key: "text", endpoint: "url/URLGetRankedNamedEntities" },
-        { name: "keywords", key: "text", endpoint: "url/URLGetRankedKeywords" },
-        { name: "concepts", key: "text", endpoint: "url/URLGetRankedConcepts" },
-        { name: "relations", key: "object.text", endpoint: "url/URLGetRelations" }
+        { generous: false, name: "entities", key: "text", endpoint: "url/URLGetRankedNamedEntities" },
+        { generous: false, name: "keywords", key: "text", endpoint: "url/URLGetRankedKeywords" },
+        { generous: false, name: "concepts", key: "text", endpoint: "url/URLGetRankedConcepts" },
+        { generous: false, name: "relations", key: "object.text", endpoint: "url/URLGetRelations" }
     ]
 
     $scope.getNumber = function(num) {
@@ -52,26 +53,26 @@ angular.module('alchemy',[])
 
     $scope.compare = function() {
         var fromURL = false;
-      if(fromURL) {
+        if(fromURL) {
         // Check that all pages have all metric data
           _.each(new Array($scope.nPages), function(p,i) {
             $scope.alchemy(i,function() {
               if(i+1 == $scope.nPages) {
-                console.log(JSON.stringify($scope.page));
-                $scope.onAlchemyDataLoaded();
+                // console.log(JSON.stringify($scope.page));
+                $scope.onalchemyRowLoaded();
               }
             })
           });
-      } else {
-        $scope.page = $scope.pageData;
-        $scope.onAlchemyDataLoaded();
-      }
+        } else {
+            $scope.page = $scope.pageData;
+            $scope.onalchemyRowLoaded();
+        }
     }
 
     $scope.path = path;
 
       // Find similarities and differences
-    $scope.onAlchemyDataLoaded = function() {
+    $scope.onalchemyRowLoaded = function() {
         // console.log("Starting comparison analysis");
         $scope.identical = {};
         _.each($scope.metrics, function(metric) {
@@ -81,8 +82,8 @@ angular.module('alchemy',[])
                 $scope.page[0].data[metric.name].raw,
                 $scope.page[1].data[metric.name].raw,
                 function(a,b) {
-                    return path(a,metric.key,"").toLowerCase()
-                    === path(b,metric.key,"").toLowerCase();
+                    return path(a,metric.key,"a").toLowerCase()
+                    === path(b,metric.key,"b").toLowerCase();
                 }
             );
 
@@ -93,8 +94,8 @@ angular.module('alchemy',[])
                         page.data[metric.name].raw,
                         function(thisRawRow){
                             return !_.any($scope.identical[metric.name], function(identiRow) {
-                                return path(thisRawRow,metric.key,"").toLowerCase()
-                                === path(identiRow,metric.key,"").toLowerCase();
+                                return path(thisRawRow,metric.key,"a").toLowerCase()
+                                === path(identiRow,metric.key,"b").toLowerCase();
                             });
                         }
                     );
@@ -118,13 +119,7 @@ angular.module('alchemy',[])
             if (res["status"] === "OK") {
               callback({metric: metric.name, data: res[metric.name]});
             }
-            // else if (res["status"] === "ERROR") {
-            //   //Do something bad
-            // }
-          },
-          // error: function(jqxhr) {
-          //   //console.log(jqxhr);
-          // }
+          }
         });
     }
 })
@@ -150,17 +145,83 @@ angular.module('alchemy',[])
     var newRange = (max < min) ? (newMax - newMin) : (newMin - newMax);
     var output;
 
-    if(newMax > newMin)
-    {
-      output = newMax - (newRange * ratio);
+    if(newMax > newMin) {
+      return newMax - (newRange * ratio);
+    } else {
+      return newMin - (newRange * ratio);
     }
-    else
-    {
-      output = newMin - (newRange * ratio);
-    }
-    return output;
   }
 })
+.filter('relevanceColor', function($filter) {
+    return function(input) {
+        return "hsl("+$filter('normalised')(input,0,1,80,0)+",100%,"+$filter('normalised')(input,0,1,100,40)+"%)";
+    }
+})
+.directive('alchemy', function ($compile) {
+    var templates = {
+        entities: "<td>\
+                        <span class='badge'\
+                            style='background: {{alchemyRow.relevance|relevanceColor}}'>\
+                            {{alchemyRow.relevance|number:2}}</span>\
+                    </td>\
+                    <td>\
+                        <span class='badge'\
+                            style='background: hsl({{alchemyRow.count|normalised:1:10:50:-20}},100%,{{alchemyRow.count|normalised:1:10:100:40}}%)'>\
+                            {{alchemyRow.count}}</span>\
+                    </td>\
+                    <td>\
+                        <span class='entity-name'>{{alchemyRow.text}}</span>\
+                        <span class='label entity-type' style='background: {{alchemyRow.type | strToHSL}};' data-icon='{{alchemyRow.type}}'>{{alchemyRow.type|splitByCap}}</span>\
+                    </td>",
+        keywords: "<td>\
+                        <span class='badge'\
+                            style='background: {{alchemyRow.relevance|relevanceColor}}'>\
+                            {{alchemyRow.relevance|number:2}}</span>\
+                    </td>\
+                    <td>{{alchemyRow.text}}</td>",
+        concepts: "<td>\
+                        <span class='badge'\
+                            style='background: {{alchemyRow.relevance|relevanceColor}}'>\
+                            {{alchemyRow.relevance|number:2}}</span>\
+                    </td>\
+                    <td>{{alchemyRow.text}}</td>",
+        relations: "<td>\
+                        <div ng-if='alchemyRow.subject' class='rel-item rel-subject' ng-if='alchemyRow.subject.text'>\
+                            <div class='rel-item__string'>{{alchemyRow.subject.text}}</div>\
+                            <div class='rel-item__caption'>subject</div>\
+                        </div>\
+                        <span ng-if='alchemyRow.action' class='rel-arrow'></span>\
+                        <div ng-if='alchemyRow.action' class='rel-item rel-action' ng-if='alchemyRow.action.verb.text'>\
+                            <div class='rel-item__string'>{{alchemyRow.action.text}}</div>\
+                            <div class='rel-item__caption'>verb</div>\
+                        </div>\
+                        <span ng-if='alchemyRow.object' class='rel-arrow'></span>\
+                        <div ng-if='alchemyRow.object' class='rel-item rel-object' ng-if='alchemyRow.object.text'>\
+                            <div class='rel-item__string'>{{alchemyRow.object.text}}</div>\
+                            <div class='rel-item__caption'>object</div>\
+                        </div>\
+                        <span ng-if='alchemyRow.location' class='rel-arrow'></span>\
+                        <div ng-if='alchemyRow.location' class='rel-item rel-location' ng-if='alchemyRow.object.text'>\
+                            <div class='rel-item__string'>{{alchemyRow.location.text}}</div>\
+                            <div class='rel-item__caption'>location</div>\
+                        </div>\
+                    </td>"
+    };
+
+    var linker = function(scope, element, attrs) {
+        element.html(templates[scope.alchemy]);
+        $compile(element.contents())(scope);
+    }
+
+    return {
+        restrict: "A",
+        link: linker,
+        scope: {
+            alchemy:'=',
+            alchemyRow: '='
+        }
+    };
+});
 
 function getHashCode(str) {
     var hash = 0;

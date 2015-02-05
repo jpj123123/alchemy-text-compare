@@ -36,94 +36,92 @@
         <center>
             <button ng-click='compare()' class='btn btn-primary btn-lg'>Compare pages</button>
         </center>
-
-        <div class='row'>
-            <h3 class='col-xs-12'>Alchemy results</h3>
-        </div>
+        <br>
 
         <article class='metric-row panel panel-default' ng-repeat='metric in metrics'>
-            <header class='panel-heading'>
-                <h4 class='metric-row__name panel-title center'>{{metric.name | capitalize}}</h4>
-            </header>
-            <div class='panel-body row'>
-                <section class='metric-identical col-md-12'>
-                    <h4>Identical {{metric.name}}</h4>
-                    <ul>
-                        <li ng-repeat='row in identical[metric.name]'>
-                            {{row}}
-                        </li>
-                    </ul>
-                </section>
-                <section class='metric-different col-md-12'>
-                    <h4>Differing {{metric.name}}</h4>
-                    <div ng-repeat='i in getNumber(nPages) track by $index' class='metric-row__set data-output col-sm-6'>
-                        <!--
-                            introduce a bit of display logic at this point
-                        -->
-
-                        <!-- ?=> MOST METRICS -->
-                        <!-- <table ng-if='metric.name != "relations"' class="table">
-                            <tr ng-repeat='(property, data) in page[$index].data[metric.name]'>
-                                <td>{{data.text}}</td>
-                            </tr>
-                        </table> -->
+            <div class='panel-body'>
+                <h2 class='metric-row__name center'>{{metric.name | capitalize}}</h2>
+                <hr>
+                <section class='metric-identical row'>
+                    <h4 class='col-sm-3'>Identical {{metric.name}}</h4>
+                    <div class='metric-row__set data-output col-sm-6'>
                         <!-- ?=> ENTITIES -->
                         <table ng-if='metric.name == "entities"' class="table">
-                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].unique'>
-                                <td>
-                                    <span
-                                        class='badge'
-                                        style='background: hsl({{data.relevance|normalised:0:1:160:140}},100%,{{data.relevance|normalised:0:1:100:20}}%)'>
-                                        {{data.relevance|number:2}}</span>
-                                </td>
-                                <td>
-                                    <span
-                                        class='badge'
-                                        style='background: hsl({{data.count|normalised:1:10:50:-20}},100%,{{data.count|normalised:1:10:100:40}}%)'>
-                                        {{data.count}}</span>
-                                </td>
-                                <td>
-                                    <span class='entity-name'>{{data.text}}</span>
-                                    <span class='label entity-type' style='background: {{data.type | strToHSL}};' data-icon='{{data.type}}'>{{data.type|splitByCap}}</span>
-                                </td>
-                            </tr>
+                            <thead>
+                                <th>Relevance</th>
+                                <th>Frequency</th>
+                                <th>Entity</th>
+                                <th>Type</th>
+                            </thead>
+                            <tr ng-repeat='data in identical[metric.name]'
+                                alchemy="metric.name" alchemy-row='data' ></tr>
                         </table>
-
                         <!-- ?=> CONCEPTS -->
                         <table ng-if='metric.name == "concepts"' class="table">
-                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].unique'>
-                                <td>{{data.text}}</td>
-                            </tr>
+                            <thead>
+                                <th>Relevance</th>
+                                <th>Frequency</th>
+                            </thead>
+                            <tr ng-repeat='data in identical[metric.name]'
+                                alchemy="metric.name" alchemy-row='data' ></tr>
                         </table>
-
                         <!-- ?=> KEYWORDS -->
                         <table ng-if='metric.name == "keywords"' class="table">
-                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].unique'>
-                                <td>{{data.text}}</td>
-                            </tr>
+                            <thead>
+                                <th>Relevance</th>
+                                <th>Frequency</th>
+                            </thead>
+                            <tr ng-repeat='data in identical[metric.name]'
+                                alchemy="metric.name" alchemy-row='data' ></tr>
                         </table>
-
                         <!-- ?=> RELATIONS -->
                         <table ng-if='metric.name == "relations"' class="table">
-                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].unique'>
-                                <td>
-                                    <div class='rel-item rel-subject' ng-if='data.subject.text'>
-                                        <div class='rel-item__string'>{{data.subject.text}}</div>
-                                        <div class='rel-item__caption'>subject</div>
-                                    </div>
-                                    <span class='rel-arrow'></span>
-                                    <div class='rel-item rel-action' ng-if='data.action.verb.text'>
-                                        <div class='rel-item__string'>{{data.action.verb.text}}</div>
-                                        <div class='rel-item__caption'>verb</div>
-                                    </div>
-                                    <span class='rel-arrow'></span>
-                                    <div class='rel-item rel-object' ng-if='data.object.text'>
-                                        <div class='rel-item__string'>{{data.object.text}}</div>
-                                        <div class='rel-item__caption'>object</div>
-                                    </div>
-                                </td>
-                            </tr>
+                            <tr ng-repeat='data in identical[metric.name]'
+                                alchemy="metric.name" alchemy-row='data' ></tr>
                         </table>
+                    </div>
+                </section>
+                <section class='metric-different'>
+                    <!-- Toggle -->
+                    <div class='toggle-data row'>
+                        <h4 class='col-sm-12'>Differing {{metric.name}}</h4>
+                        <div class='col-sm-12'>
+                            <label class="checkbox-inline">
+                                <input type='checkbox' ng-model='metric.generous' class='btn btn-default' />
+                                <strong ng-show='metric.generous'>Hide</strong>
+                                <strong ng-show='!metric.generous'>Show</strong>
+                                <span>less relevant items</span>
+                            </label>
+                            <br>
+                        </div>
+                    </div>
+                    <!-- -->
+                    <div class='row'>
+                        <div ng-repeat='i in getNumber(nPages) track by $index' class='metric-row__set data-output col-xs-6'>
+                            <!-- ?=> ENTITIES -->
+                            <table ng-if='metric.name == "entities"' class="table">
+                                <tr ng-repeat='data in page[$index].data[metric.name].unique'
+                                    alchemy="metric.name" alchemy-row='data'
+                                    ng-show='metric.generous || data.relevance > relThreshold'></tr>
+                            </table>
+                            <!-- ?=> CONCEPTS -->
+                            <table ng-if='metric.name == "concepts"' class="table">
+                                <tr ng-repeat='data in page[$index].data[metric.name].unique'
+                                    alchemy="metric.name" alchemy-row='data'
+                                    ng-show='metric.generous || data.relevance > relThreshold'></tr>
+                            </table>
+                            <!-- ?=> KEYWORDS -->
+                            <table ng-if='metric.name == "keywords"' class="table">
+                                <tr ng-repeat='data in page[$index].data[metric.name].unique'
+                                    alchemy="metric.name" alchemy-row='data'
+                                    ng-show='metric.generous || data.relevance > relThreshold'></tr>
+                            </table>
+                            <!-- ?=> RELATIONS -->
+                            <table ng-if='metric.name == "relations"' class="table">
+                                <tr ng-repeat='data in page[$index].data[metric.name].unique'
+                                    alchemy="metric.name" alchemy-row='data'></tr>
+                            </table>
+                        </div>
                     </div>
                 </section>
             </div>
