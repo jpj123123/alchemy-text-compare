@@ -108,7 +108,7 @@ angular.module('alchemy',[])
 })
 .filter('strToHSL', function() {
   return function(input) {
-    return intToHSL(getHashCode(input))
+    return intToHSL(getHashCode(input));
   }
 })
 .filter('splitByCap', function() {
@@ -142,9 +142,6 @@ angular.module('alchemy',[])
   }
 })
 
-function strToHSL(value) {
-    return intToHSL(getHashCode(value));
-}
 function getHashCode(str) {
     var hash = 0;
     if (str.length == 0) return hash;

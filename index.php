@@ -64,7 +64,7 @@
                             <td>
                                 <span
                                     class='badge'
-                                    style='background: hsl(150,100%,{{data.relevance|normalised:0:1:100:50}}%)'>
+                                    style='background: hsl({{data.relevance|normalised:0:1:160:140}},100%,{{data.relevance|normalised:0:1:100:20}}%)'>
                                     {{data.relevance|number:2}}</span>
                             </td>
                             <td>
@@ -75,7 +75,7 @@
                             </td>
                             <td>
                                 {{data.text}}
-                                <span class='label entity-type' style='background: {{data.type | strToHSL}};'>{{data.type|splitByCap}}</span>
+                                <span class='label entity-type' style='background: {{data.type | strToHSL}};' data-icon='{{data.type}}'>{{data.type|splitByCap}}</span>
                             </td>
                         </tr>
                     </table>
