@@ -46,69 +46,85 @@
                 <h4 class='metric-row__name panel-title center'>{{metric.name | capitalize}}</h4>
             </header>
             <div class='panel-body row'>
-                <section ng-repeat='i in getNumber(nPages) track by $index' class='metric-row__set data-output col-sm-6'>
-                    <!--
-                        introduce a bit of display logic at this point
-                    -->
+                <section class='metric-identical col-md-12'>
+                    <h4>Identical {{metric.name}}</h4>
+                    <ul>
+                        <li ng-repeat='row in identical[metric.name]'>
+                            {{row}}
+                        </li>
+                    </ul>
+                </section>
+                <section class='metric-different col-md-12'>
+                    <h4>Differing {{metric.name}}</h4>
+                    <div ng-repeat='i in getNumber(nPages) track by $index' class='metric-row__set data-output col-sm-6'>
+                        <!--
+                            introduce a bit of display logic at this point
+                        -->
 
-                    <!-- ?=> MOST METRICS -->
-                    <!-- <table ng-if='metric.name != "relations"' class="table">
-                        <tr ng-repeat='(property, data) in page[$index].data[metric.name]'>
-                            <td>{{data.text}}</td>
-                        </tr>
-                    </table> -->
+                        <!-- ?=> MOST METRICS -->
+                        <!-- <table ng-if='metric.name != "relations"' class="table">
+                            <tr ng-repeat='(property, data) in page[$index].data[metric.name]'>
+                                <td>{{data.text}}</td>
+                            </tr>
+                        </table> -->
+                        <!-- ?=> ENTITIES -->
+                        <table ng-if='metric.name == "entities"' class="table">
+                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
+                                <td>
+                                    <span
+                                        class='badge'
+                                        style='background: hsl({{data.relevance|normalised:0:1:160:140}},100%,{{data.relevance|normalised:0:1:100:20}}%)'>
+                                        {{data.relevance|number:2}}</span>
+                                </td>
+                                <td>
+                                    <span
+                                        class='badge'
+                                        style='background: hsl({{data.count|normalised:1:10:50:-20}},100%,{{data.count|normalised:1:10:100:40}}%)'>
+                                        {{data.count}}</span>
+                                </td>
+                                <td>
+                                    <span class='entity-name'>{{data.text}}</span>
+                                    <span class='label entity-type' style='background: {{data.type | strToHSL}};' data-icon='{{data.type}}'>{{data.type|splitByCap}}</span>
+                                </td>
+                            </tr>
+                        </table>
 
-                    <!-- ?=> ENTITIES -->
-                    <table ng-if='metric.name == "entities"' class="table">
-                        <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
-                            <td>
-                                <span
-                                    class='badge'
-                                    style='background: hsl({{data.relevance|normalised:0:1:160:140}},100%,{{data.relevance|normalised:0:1:100:20}}%)'>
-                                    {{data.relevance|number:2}}</span>
-                            </td>
-                            <td>
-                                <span
-                                    class='badge'
-                                    style='background: hsl({{data.count|normalised:1:10:50:-20}},100%,{{data.count|normalised:1:10:100:40}}%)'>
-                                    {{data.count}}</span>
-                            </td>
-                            <td>
-                                {{data.text}}
-                                <span class='label entity-type' style='background: {{data.type | strToHSL}};' data-icon='{{data.type}}'>{{data.type|splitByCap}}</span>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- ?=> CONCEPTS -->
+                        <table ng-if='metric.name == "concepts"' class="table">
+                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
+                                <td>{{data.text}}</td>
+                            </tr>
+                        </table>
 
-                    <!-- ?=> RELATIONS -->
-                    <table ng-if='metric.name == "relations"' class="table">
-                        <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
-                            <td>
-                                <div class='rel-item rel-subject' ng-if='data.subject.text'>
-                                    <div class='rel-item__string'>{{data.subject.text}}</div>
-                                    <div class='rel-item__caption'>subject</div>
-                                </div>
-                                <span class='rel-arrow'></span>
-                                <div class='rel-item rel-action' ng-if='data.action.verb.text'>
-                                    <div class='rel-item__string'>{{data.action.verb.text}}</div>
-                                    <div class='rel-item__caption'>verb</div>
-                                </div>
-                                <span class='rel-arrow'></span>
-                                <div class='rel-item rel-object' ng-if='data.object.text'>
-                                    <div class='rel-item__string'>{{data.object.text}}</div>
-                                    <div class='rel-item__caption'>object</div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- ?=> KEYWORDS -->
+                        <table ng-if='metric.name == "keywords"' class="table">
+                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
+                                <td>{{data.text}}</td>
+                            </tr>
+                        </table>
 
-                    <!-- data view -->
-                    <!-- <table class="table">
-                        <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
-                            <td>{{data}}</td>
-                        </tr>
-                    </table> -->
-
+                        <!-- ?=> RELATIONS -->
+                        <table ng-if='metric.name == "relations"' class="table">
+                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
+                                <td>
+                                    <div class='rel-item rel-subject' ng-if='data.subject.text'>
+                                        <div class='rel-item__string'>{{data.subject.text}}</div>
+                                        <div class='rel-item__caption'>subject</div>
+                                    </div>
+                                    <span class='rel-arrow'></span>
+                                    <div class='rel-item rel-action' ng-if='data.action.verb.text'>
+                                        <div class='rel-item__string'>{{data.action.verb.text}}</div>
+                                        <div class='rel-item__caption'>verb</div>
+                                    </div>
+                                    <span class='rel-arrow'></span>
+                                    <div class='rel-item rel-object' ng-if='data.object.text'>
+                                        <div class='rel-item__string'>{{data.object.text}}</div>
+                                        <div class='rel-item__caption'>object</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </section>
             </div>
         </article>
