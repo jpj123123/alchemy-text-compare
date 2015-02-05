@@ -76,39 +76,31 @@ angular.module('alchemy',[])
         $scope.identical = {};
         _.each($scope.metrics, function(metric) {
 
-            // console.log($scope.page[0].data[metric.name].raw)
+            // Compile list of identical data
             $scope.identical[metric.name] = intersectionObjects(
                 $scope.page[0].data[metric.name].raw,
                 $scope.page[1].data[metric.name].raw,
                 function(a,b) {
-                    // console.log(metric.name,metric.key,path(a,metric.key));
-                    return path(a,metric.key,"...") === path(b,metric.key,"...");
+                    return path(a,metric.key,"").toLowerCase()
+                    === path(b,metric.key,"").toLowerCase();
                 }
             );
-            // console.log($scope.identical[metric.name]);
-            _.each($scope.page, function(page) {
 
-                page.data[metric.name].unique = _.filter(
-                    page.data[metric.name].raw,
-                    function(row) {
-                        var isUnique = 0;
-                        _.each($scope.identical[metric.name], function(identicalRow) {
-                            isUnique += (path(row,metric.key,"...") == path(identicalRow,metric.key,"...")) ? 1 : 0;
-                        });
-                        return (isUnique > 0);
-                    }
-                );
-            })
+            // Remove identical data from raw lists
+            _.each($scope.page, function(page,i) {
+                page.data[metric.name].unique =
+                    _.filter(
+                        page.data[metric.name].raw,
+                        function(thisRawRow){
+                            return !_.any($scope.identical[metric.name], function(identiRow) {
+                                return path(thisRawRow,metric.key,"").toLowerCase()
+                                === path(identiRow,metric.key,"").toLowerCase();
+                            });
+                        }
+                    );
+            });
 
-            // $scope.intersection = _.intersection(
-            //                         $scope.page[0].data[metric.name],
-            //                         $scope.page[1].data[metric.name]
-            //                       );
-            // $scope.difference = _.difference(
-            //                         $scope.page[0].data[metric.name],
-            //                         $scope.page[1].data[metric.name]
-            //                       );
-        })
+        });
     }
 
     $scope.AlchemyApi = function(url, metric, callback) {

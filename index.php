@@ -69,7 +69,7 @@
                         </table> -->
                         <!-- ?=> ENTITIES -->
                         <table ng-if='metric.name == "entities"' class="table">
-                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
+                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].unique'>
                                 <td>
                                     <span
                                         class='badge'
@@ -91,21 +91,21 @@
 
                         <!-- ?=> CONCEPTS -->
                         <table ng-if='metric.name == "concepts"' class="table">
-                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
+                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].unique'>
                                 <td>{{data.text}}</td>
                             </tr>
                         </table>
 
                         <!-- ?=> KEYWORDS -->
                         <table ng-if='metric.name == "keywords"' class="table">
-                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
+                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].unique'>
                                 <td>{{data.text}}</td>
                             </tr>
                         </table>
 
                         <!-- ?=> RELATIONS -->
                         <table ng-if='metric.name == "relations"' class="table">
-                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].raw'>
+                            <tr ng-repeat='(property, data) in page[$index].data[metric.name].unique'>
                                 <td>
                                     <div class='rel-item rel-subject' ng-if='data.subject.text'>
                                         <div class='rel-item__string'>{{data.subject.text}}</div>
