@@ -35,16 +35,19 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-[alchemy] td {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+[alchemy] {
+  text-align: center;
+  td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
-  &:hover {
-    &, * {
-      max-width: none;
-      white-space: initial;
-      overflow: visible;
+    &:hover {
+      &, * {
+        max-width: none;
+        white-space: initial;
+        overflow: visible;
+      }
     }
   }
 }

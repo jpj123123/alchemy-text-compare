@@ -19,8 +19,8 @@ angular.module('alchemy',[])
     $scope.nPages = 2;
     $scope.metrics = [
         { generous: false, name: "entities", key: "text", endpoint: "url/URLGetRankedNamedEntities" },
-        { generous: false, name: "keywords", key: "text", endpoint: "url/URLGetRankedKeywords" },
         { generous: false, name: "concepts", key: "text", endpoint: "url/URLGetRankedConcepts" },
+        { generous: false, name: "keywords", key: "text", endpoint: "url/URLGetRankedKeywords" },
         { generous: false, name: "relations", key: "object.text", endpoint: "url/URLGetRelations" }
     ]
 
@@ -52,7 +52,7 @@ angular.module('alchemy',[])
     }
 
     $scope.compare = function() {
-        var fromURL = false;
+        var fromURL = true;
         if(fromURL) {
         // Check that all pages have all metric data
           _.each(new Array($scope.nPages), function(p,i) {
@@ -73,7 +73,7 @@ angular.module('alchemy',[])
 
       // Find similarities and differences
     $scope.onalchemyRowLoaded = function() {
-        // console.log("Starting comparison analysis");
+        console.log("Starting comparison analysis");
         $scope.identical = {};
         _.each($scope.metrics, function(metric) {
 
