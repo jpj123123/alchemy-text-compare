@@ -171,6 +171,8 @@ angular.module('alchemy',[])
                     </td>\
                     <td>\
                         <span class='entity-name'>{{alchemyRow.text}}</span>\
+                    </td>\
+                    <td>\
                         <span class='label entity-type' style='background: {{alchemyRow.type | strToHSL}};' data-icon='{{alchemyRow.type}}'>{{alchemyRow.type|splitByCap}}</span>\
                     </td>",
         keywords: "<td>\
