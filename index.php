@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Goog Product Table</title>
+    <title>CHRYSUS Literary Analysis</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel='stylesheet' href='public/css/app.min.css' />
     <link rel='stylesheet' href='../global/public/css/app.min.css' />
@@ -22,18 +22,32 @@
 
         <div class='row'>
             <h3 class='col-xs-12'>Comparison</h3>
-            <div ng-repeat='i in getNumber(nPages) track by $index' class='col-sm-6'>
-                <form class='data-input' ng-submit='alchemy($index)'>
-                    <div class="form-group">
+            <div class='col-xs-12 form-group'>
+                <input type='radio' ng-model='urlOrStr' value='url' selected /> URL
+                <input type='radio' ng-model='urlOrStr' value='str' /> Text
+            </div>
+
+            <form ng-show='urlOrStr === "url"' class='data-input'>
+                <div ng-repeat='i in getNumber(nPages) track by $index' class='col-sm-6'>
+                    <div class="form-group" >
                         <label ng-if='$index == 0'>Control page</label>
                         <label ng-if='$index == 1'>Test page</label>
                         <input ng-model='page[$index].url' tabindex="{{$index+1}}" type='url' class="form-control" placeholder="URL" />
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
+            <form ng-show='urlOrStr === "str"' class='data-input'>
+                <div ng-repeat='i in getNumber(nPages) track by $index' class='col-sm-6'>
+                    <div class="form-group" >
+                        <label ng-if='$index == 0'>Control text</label>
+                        <label ng-if='$index == 1'>Test text</label>
+                        <textarea ng-model='page[$index].text' tabindex="{{$index+1}}" class="form-control" placeholder="Text to test against"></textarea>
+                    </div>
+                </div>
+            </form>
         </div>
 
-        <center>
+        <center ng-show='urlOrStr'>
             <button ng-click='compare()' class='btn btn-primary btn-lg'>Compare pages</button>
         </center>
         <br>
