@@ -1,22 +1,36 @@
 {
-  "name": "boom-googprods",
+  "name": "boom-alchemy",
+  "version": "1.0.0",
+  "main": "server.js",
   "scripts": {
-    "start": "gulp"
+    "start": "node server.js"
   },
-  "devDependencies": {
-    "del": "*",
-    "gulp": "*",
-    "gulp-autoprefixer": "*",
-    "gulp-concat": "*",
-    "gulp-sass": "1.1.0",
-    "gulp-load-plugins": "*",
-    "gulp-minify-css": "*",
-    "gulp-rename": "*",
-    "gulp-size": "*",
-    "gulp-uglify": "*",
-    "gulp-watch": "*",
-    "gulp-sourcemaps": "*",
-    "main-bower-files": "*"
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://janbaykara@bitbucket.org/boomonline/chrysus.git"
   },
-  "author": "Jan Baykara <jan@baykara.co.uk> (http://jan.baykara.co.uk/)"
+  "engines": {
+    "node": "0.10.x",
+    "npm": ">= 1.0.0"
+  },
+  "keywords": [
+    "OpenShift",
+    "Node.js",
+    "application",
+    "openshift",
+    "express",
+    "Google",
+    "PPC",
+    "xml",
+    "json"
+  ],
+  "author": "Jan Baykara <jan@baykara.co.uk>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.11.2",
+    "json2csv": "^2.2.1",
+    "lodash": "^3.2.0",
+    "request": "^2.53.0"
+  }
 }
