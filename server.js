@@ -2,7 +2,7 @@
 
 // DEPS
 var express = require('express')
-var feed2csv = require(__dirname + '/app')
+var tabuliser = require(__dirname + '/app')
 
 ///////////////
 /// Config
@@ -11,8 +11,8 @@ var App = function() {
     this.server = express();
 
     // API
-    this.server.post('/feed2csv', function(req, res) {
-        feed2csv.fromFormData(req, res);
+    this.server.post('/csv_download', function(req, res) {
+        tabuliser.json2csv(req, res);
     });
 
     // Frontend

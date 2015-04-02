@@ -138,6 +138,24 @@ angular.module('alchemy',[])
           }
         });
     }
+
+    $scope.jsonToCSV = function() {
+        $.ajax({
+            url: '/csv_download',
+            data: {
+                columns: {},
+                rows: {}
+            },
+            type: "POST",
+            success: function(res) {
+
+            }
+        })
+    }
+
+    $scope.print = function() {
+        window.print();
+    }
 })
 .filter('capitalize', function() {
   return function(input, all) {

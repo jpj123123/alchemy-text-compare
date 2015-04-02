@@ -6,6 +6,11 @@ var json2csv = require('json2csv')
 /// Functions
 ///////////////
 
-var app = {}
+var app = {
+    json2csv: function(req,res) {
+        console.log(req);
+        res.send();
+    }
+}
 
 module.exports = app;
