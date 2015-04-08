@@ -52,12 +52,12 @@
         </div>
 
         <center ng-show='urlOrStr'>
-            <button ng-click='compare()' class='btn btn-primary btn-lg'>Compare pages</button>
+            <button ng-click='compare()' class='btn btn-primary btn-lg'><span ng-class="{'spinning glyphicon glyphicon-cog': !alchemyAccomplished && initialised}"></span> Compare pages</button>
             <button ng-click='print()' class='btn btn-secondary btn-lg'>Save as PDF</button>
         </center>
         <br>
 
-        <article class='metric-row panel panel-default' ng-repeat='metric in metrics'>
+        <article class='metric-row panel panel-default' ng-repeat='metric in metrics' ng-show='alchemyAccomplished'>
             <div class='panel-body'>
                 <h2 class='metric-row__name center'>{{metric.name | capitalize}}</h2>
                 <hr>

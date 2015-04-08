@@ -16,6 +16,8 @@ angular.module('alchemy',[])
     _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
 
     // Defaults
+    $scope.initialised = false;
+    $scope.alchemyAccomplished = false;
     $scope.urlOrStr = 'url';
     $scope.relThreshold = 0.2;
     $scope.nPages = 2;
@@ -38,33 +40,22 @@ angular.module('alchemy',[])
     $scope.path = path;
 
     $scope.compare = function() {
-        var fromURL = true;
-        if(fromURL) {
-        // Check that all pages have all metric data
-          _.each(new Array($scope.nPages), function(p,i) {
-            if($scope.urlOrStr == 'url') {
-            ///////////
-            /// FROM URL
-            ///////////
-                $scope.alchemy(i, "url/URL", {url: $scope.page[i].url} ,function() {
-                  if(i+1 == $scope.nPages) {
-                    // console.log(JSON.stringify($scope.page));
-                    $scope.onalchemyRowLoaded();
-                  }
+        $scope.initialised = true;
+        $scope.alchemyAccomplished = false;
+        var genuineAPICall = true;
+        if(genuineAPICall) {
+            // Check that all pages have all metric data
+            _.each(new Array($scope.nPages), function(p,i) {
+                var urlSegment = ($scope.urlOrStr == 'url') ? "url/URL" : "text/Text";
+                var queryData = ($scope.urlOrStr == 'url') ? {url: $scope.page[i].url} : {text: $scope.page[i].text};
+
+                $scope.alchemy(i, urlSegment, queryData ,function() {
+                    if(i+1 == $scope.nPages) {
+                        // console.log(JSON.stringify($scope.page));
+                        $scope.onalchemyRowLoaded();
+                    }
                 })
-            } else {
-            ///////////
-            /// FROM TEXT
-            ///////////
-                $scope.alchemy(i, "text/Text", {text: $scope.page[i].text} ,function() {
-                  if(i+1 == $scope.nPages) {
-                    // console.log(JSON.stringify($scope.page));
-                    $scope.onalchemyRowLoaded();
-                  }
-                })
-            ///////////
-            }
-          });
+            });
         } else {
             $scope.page = $scope.pageData;
             $scope.onalchemyRowLoaded();
@@ -118,7 +109,19 @@ angular.module('alchemy',[])
                     );
             });
 
+            // var allPagesMetricsLoaded
+            //     = _.every($scope.page, function(page) {
+            //         _.every(page.data, function(metric) {
+            //             return (typeof metric.raw !== 'undefined')
+            //         })
+            //     })
+
+            // $scope.alchemyAccomplished = allPagesMetricsLoaded
+
+            // $scope.$apply()
         });
+        $scope.alchemyAccomplished = true
+        // On completed metrics
     }
 
     $scope.AlchemyApi = function(inputType, metric, dataObj, callback) {
