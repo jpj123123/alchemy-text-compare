@@ -153,7 +153,7 @@
     border-left: 10px solid #99c270
 }
 
-
+th { text-align: center; }
 
 .glyphicon.spinning {
     animation: spin 1s infinite linear;

@@ -16,7 +16,7 @@ var App = function() {
     });
 
     // Frontend
-    this.server.use(express.static(__dirname + '/public'));
+    this.server.use(express.static(__dirname + '/../client'));
 }
 App.prototype.start = function() {
     var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0";

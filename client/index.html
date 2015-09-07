@@ -54,6 +54,7 @@
         <center ng-show='urlOrStr'>
             <button ng-click='compare()' class='btn btn-primary btn-lg'><span ng-class="{'spinning glyphicon glyphicon-cog': !alchemyAccomplished && initialised}"></span> Compare pages</button>
             <button ng-click='print()' class='btn btn-secondary btn-lg'>Save as PDF</button>
+            <button ng-click='jsonToCSV()' class='btn btn-secondary btn-lg'>Save as PDF</button>
         </center>
         <br>
 
@@ -79,7 +80,7 @@
                         <table ng-if='metric.name == "concepts"' class="table">
                             <thead>
                                 <th>Relevance</th>
-                                <th>Frequency</th>
+                                <th>Entity</th>
                             </thead>
                             <tr ng-repeat='data in identical[metric.name]'
                                 alchemy="metric.name" alchemy-row='data' ></tr>
@@ -88,13 +89,8 @@
                         <table ng-if='metric.name == "keywords"' class="table">
                             <thead>
                                 <th>Relevance</th>
-                                <th>Frequency</th>
+                                <th>Entity</th>
                             </thead>
-                            <tr ng-repeat='data in identical[metric.name]'
-                                alchemy="metric.name" alchemy-row='data' ></tr>
-                        </table>
-                        <!-- ?=> RELATIONS -->
-                        <table ng-if='metric.name == "relations"' class="table">
                             <tr ng-repeat='data in identical[metric.name]'
                                 alchemy="metric.name" alchemy-row='data' ></tr>
                         </table>
