@@ -2,6 +2,7 @@
 
 // DEPS
 var express = require('express')
+var bodyParser = require('body-parser')
 var tabuliser = require(__dirname + '/app')
 
 ///////////////
@@ -10,9 +11,13 @@ var tabuliser = require(__dirname + '/app')
 var App = function() {
     this.server = express();
 
+	this.server.use(bodyParser.urlencoded({ extended: true }));
+	this.server.use(bodyParser.json());
+
     // API
     this.server.post('/csv_download', function(req, res) {
-        tabuliser.json2csv(req, res);
+		var data = req.body;
+        tabuliser.json2csv(data, res);
     });
 
     // Frontend

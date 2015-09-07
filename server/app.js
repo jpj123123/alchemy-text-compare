@@ -8,8 +8,10 @@ var json2csv = require('json2csv')
 
 var app = {
     json2csv: function(req,res) {
-        console.log(req);
-        res.send();
+		return json2csv(req, function(err, csv) {
+			res.type('csv');
+	        res.send(csv);
+		});
     }
 }
 

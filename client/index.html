@@ -36,7 +36,7 @@
                     <div class="form-group" >
                         <label ng-if='$index == 0'>Control page</label>
                         <label ng-if='$index == 1'>Test page</label>
-                        <input ng-model='page[$index].url' tabindex="{{$index+1}}" type='url' class="form-control" placeholder="URL" />
+                        <input ng-model='pages[$index].url' tabindex="{{$index+1}}" type='url' class="form-control" placeholder="URL" />
                     </div>
                 </div>
             </form>
@@ -45,16 +45,17 @@
                     <div class="form-group" >
                         <label ng-if='$index == 0'>Control text</label>
                         <label ng-if='$index == 1'>Test text</label>
-                        <textarea ng-model='page[$index].text' tabindex="{{$index+1}}" class="form-control" placeholder="Text to test against"></textarea>
+                        <textarea ng-model='pages[$index].text' tabindex="{{$index+1}}" class="form-control" placeholder="Text to test against"></textarea>
                     </div>
                 </div>
             </form>
         </div>
 
         <center ng-show='urlOrStr'>
-            <button ng-click='compare()' class='btn btn-primary btn-lg'><span ng-class="{'spinning glyphicon glyphicon-cog': !alchemyAccomplished && initialised}"></span> Compare pages</button>
-            <button ng-click='print()' class='btn btn-secondary btn-lg'>Save as PDF</button>
-            <button ng-click='jsonToCSV()' class='btn btn-secondary btn-lg'>Save as PDF</button>
+            <button ng-click='compare()' class='btn btn-primary btn-lg'><span ng-class="{'spinning glyphicon glyphicon-cog': !alchemyAccomplished && initialised}"></span> Compare</button>
+            <button ng-click='print()' class='btn btn-secondary btn-lg'>PDF</button>
+            <button id='downloadbtn' ng-click='jsonToCSV()' class='btn btn-secondary btn-lg'>Generate CSV</button>
+			<a ng-show='download == true'class='btn btn-primary btn-lg' id='download' ng-click='download = false'>Download CSV</a>
         </center>
         <br>
 
@@ -115,25 +116,25 @@
                         <div ng-repeat='i in getNumber(nPages) track by $index' class='metric-row__set data-output col-xs-6'>
                             <!-- ?=> ENTITIES -->
                             <table ng-if='metric.name == "entities"' class="table">
-                                <tr ng-repeat='data in page[$index].data[metric.name].unique'
+                                <tr ng-repeat='data in pages[$index].data[metric.name].unique'
                                     alchemy="metric.name" alchemy-row='data'
                                     ng-show='metric.generous || data.relevance > relThreshold'></tr>
                             </table>
                             <!-- ?=> CONCEPTS -->
                             <table ng-if='metric.name == "concepts"' class="table">
-                                <tr ng-repeat='data in page[$index].data[metric.name].unique'
+                                <tr ng-repeat='data in pages[$index].data[metric.name].unique'
                                     alchemy="metric.name" alchemy-row='data'
                                     ng-show='metric.generous || data.relevance > relThreshold'></tr>
                             </table>
                             <!-- ?=> KEYWORDS -->
                             <table ng-if='metric.name == "keywords"' class="table">
-                                <tr ng-repeat='data in page[$index].data[metric.name].unique'
+                                <tr ng-repeat='data in pages[$index].data[metric.name].unique'
                                     alchemy="metric.name" alchemy-row='data'
                                     ng-show='metric.generous || data.relevance > relThreshold'></tr>
                             </table>
                             <!-- ?=> RELATIONS -->
                             <table ng-if='metric.name == "relations"' class="table">
-                                <tr ng-repeat='data in page[$index].data[metric.name].unique'
+                                <tr ng-repeat='data in pages[$index].data[metric.name].unique'
                                     alchemy="metric.name" alchemy-row='data'></tr>
                             </table>
                         </div>
