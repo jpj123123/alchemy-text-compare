@@ -169,3 +169,48 @@ th { text-align: center; }
     from { -webkit-transform: rotate(0deg);}
     to { -webkit-transform: rotate(360deg);}
 }
+
+@media print {
+    * {
+      -webkit-print-color-adjust: exact;
+    }
+    header .col-sm-10.col-lg-11.col-lg-push-1,
+    footer,
+    hr,
+    [ng-show="urlOrStr"],
+    h3,
+    .col-sm-2.col-lg-1,
+    .checkbox-inline,
+    [ng-show="urlOrStr"],
+    [ng-show="urlOrStr"] + br {
+        display: none;
+    }
+    body {
+        padding: 0px !important;
+    }
+    .container {
+        width: auto;
+        padding: 0;
+    }
+    td.ng-binding {
+        text-align: left;
+        text-transform: capitalize;
+    }
+    body {
+        zoom: 0.9;
+    }
+    td {
+        padding: 3px 0 !important;
+    }
+    .panel-body {
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+    .panel,
+    .panel-body {
+        padding-left: 0;
+        padding-right: 0;
+        border-left: none;
+        border-right: none;
+    }
+}
