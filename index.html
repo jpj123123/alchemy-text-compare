@@ -55,7 +55,7 @@
             <button ng-click='compare()' class='btn btn-primary btn-lg'><span ng-class="{'spinning glyphicon glyphicon-cog': !alchemyAccomplished && initialised}"></span> Compare</button>
             <button ng-click='print()' class='btn btn-secondary btn-lg'>PDF</button>
             <button id='downloadbtn' ng-click='jsonToCSV()' class='btn btn-secondary btn-lg'>Generate CSV</button>
-			<a ng-show='download == true'class='btn btn-primary btn-lg' id='download' ng-click='download = false'>Download CSV</a>
+			<a ng-show='download == true'class='btn btn-primary btn-lg' id='download' ng-click='downloaded()'>Download CSV</a>
         </center>
         <br>
 

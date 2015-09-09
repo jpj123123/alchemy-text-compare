@@ -104,14 +104,6 @@ angular.module('alchemy',[])
 	                    === path(b,metric.key,"b").toLowerCase();
 	                }
 	            );
-				// For CSV
-				/* // Disabled: inclusion of duplicate text.
-				_.each($scope.identical[metric.name], function(datum) {
-					datum.source = 'IDENTICAL';
-					datum.metric = metric.name;
-	                $scope.combined.push(datum);
-				});
-				*/
 
 	            // Remove identical data from raw lists
 	            _.each($scope.pages, function(page, i) {
@@ -123,13 +115,8 @@ angular.module('alchemy',[])
                             });
                         }
                     );
-					// For CSV
-					_.each(page.data[metric.name].unique, function(datum) {
-						datum.source = $scope.urlOrStr ? page.url : page.text.substring(0, 20);
-						datum.metric = metric.name;
-						$scope.combined.push(datum);
-					});
 	            });
+
 
 	        });
 	        $scope.alchemyAccomplished = true
@@ -161,20 +148,39 @@ angular.module('alchemy',[])
     }
 
     $scope.jsonToCSV = function() {
-		$scope.combined = _.sortByAll($scope.combined, ['source', 'relevance', 'count', 'metric']).reverse();
+
+		$scope.combined = [];
+
+		_.each($scope.pages, function(page) {
+			_.each($scope.metrics, function(metric) {
+				// For CSV
+				/* // Disabled: inclusion of duplicate text.
+				_.each($scope.identical[metric.name], function(datum) {
+					datum.source = 'IDENTICAL';
+					datum.metric = metric.name;
+					$scope.combined.push(datum);
+				});
+				*/
+
+				// For CSV
+				_.each(page.data[metric.name].unique, function(datum) {
+					datum.source = $scope.urlOrStr ? page.url : page.text.substring(0, 20);
+					datum.metric = metric.name;
+					$scope.combined.push(datum);
+				});
+				// --
+			});
+		});
+
+		$scope.combined = _.sortByAll($scope.combined, ['source', 'relevance', 'count', 'metric']);
 		var packet = {
 			fields: ['source', 'metric', 'relevance', 'text', 'count', 'type'],
-			data: $scope.combined
+			data: $scope.combined.reverse()
 		};
 
-		console.log(packet.data)
-
-		// $http.post('/csv_download', packet)
-        // .success(csvReceiver)
-		// .error(function(data, status, header, config){
-        //     console.log("ERROR!",data, status, header, config);
-        // })
-		json2csv(packet, function(err,data) {
+		console.log($scope.combined.length)
+		var converter = new json2csv();
+		converter(packet, function(err,data) {
 			csvReceiver(data);
 		});
 
@@ -192,6 +198,11 @@ angular.module('alchemy',[])
     $scope.print = function() {
         window.print();
     }
+
+	$scope.downloaded = function() {
+		$scope.download = true;
+		$scope.combined = [];
+	}
 })
 .filter('capitalize', function() {
   return function(input, all) {
@@ -373,171 +384,174 @@ var get = _.get;
  *   if error, returning error in call back.
  *   if csv is created successfully, returning csv output to callback.
  */
-function json2csv(params, callback) {
-  if (!callback || typeof callback !== 'function') {
-    throw new Error('Callback is required');
-  }
+function json2csv() {
 
-  checkParams(params, function (err) {
-    if (err) {
-      return callback(err);
-    }
+	return function(params, callback) {
+	  if (!callback || typeof callback !== 'function') {
+	    throw new Error('Callback is required');
+	  }
 
-    var titles = createColumnTitles(params);
-    var csv = createColumnContent(params, titles);
+	  checkParams(params, function (err) {
+	    if (err) {
+	      return callback(err);
+	    }
 
-    callback(null, csv);
-  });
-};
+	    var titles = createColumnTitles(params);
+	    var csv = createColumnContent(params, titles);
+
+	    callback(null, csv);
+	  });
+	};
 
 
-/**
- * Check passing params
- *
- * @param {Object} params Function parameters containing data, fields,
- * delimiter, default value, mark quotes and hasCSVColumnTitle
- * @param {Function} callback Callback function returning error when invalid field is found
- */
-function checkParams(params, callback) {
-  // if data is an Object, not in array [{}], then just create 1 item array.
-  // So from now all data in array of object format.
-  if (!Array.isArray(params.data)) {
-    var ar = [];
-    ar[0] = params.data;
-    params.data = ar;
-  }
+	/**
+	 * Check passing params
+	 *
+	 * @param {Object} params Function parameters containing data, fields,
+	 * delimiter, default value, mark quotes and hasCSVColumnTitle
+	 * @param {Function} callback Callback function returning error when invalid field is found
+	 */
+	function checkParams(params, callback) {
+	  // if data is an Object, not in array [{}], then just create 1 item array.
+	  // So from now all data in array of object format.
+	  if (!Array.isArray(params.data)) {
+	    var ar = [];
+	    ar[0] = params.data;
+	    params.data = ar;
+	  }
 
-  if (!params.fields && params.data && params.data.length) {
-    params.fields = Object.keys(params.data[0]);
-  }
+	  if (!params.fields && params.data && params.data.length) {
+	    params.fields = Object.keys(params.data[0]);
+	  }
 
-  //#check fieldNames
-  if (params.fieldNames && params.fieldNames.length !== params.fields.length) {
-    return callback(new Error('fieldNames and fields should be of the same length, if fieldNames is provided.'));
-  }
+	  //#check fieldNames
+	  if (params.fieldNames && params.fieldNames.length !== params.fields.length) {
+	    return callback(new Error('fieldNames and fields should be of the same length, if fieldNames is provided.'));
+	  }
 
-  params.fieldNames = params.fieldNames || params.fields;
+	  params.fieldNames = params.fieldNames || params.fields;
 
-  //#check delimiter
-  params.del = params.del || ',';
+	  //#check delimiter
+	  params.del = params.del || ',';
 
-  //#check end of line character
-  params.eol = params.eol || '';
+	  //#check end of line character
+	  params.eol = params.eol || '';
 
-  //#check quotation mark
-  params.quotes = typeof params.quotes === 'string' ? params.quotes : '"';
+	  //#check quotation mark
+	  params.quotes = typeof params.quotes === 'string' ? params.quotes : '"';
 
-  //#check nested option
-  params.nested = params.nested || false;
+	  //#check nested option
+	  params.nested = params.nested || false;
 
-  //#check default value
-  params.defaultValue = params.defaultValue;
+	  //#check default value
+	  params.defaultValue = params.defaultValue;
 
-  //#check hasCSVColumnTitle, if it is not explicitly set to false then true.
-  if (params.hasCSVColumnTitle !== false) {
-    params.hasCSVColumnTitle = true;
-  }
+	  //#check hasCSVColumnTitle, if it is not explicitly set to false then true.
+	  if (params.hasCSVColumnTitle !== false) {
+	    params.hasCSVColumnTitle = true;
+	  }
 
-  callback(null);
-}
+	  callback(null);
+	}
 
-/**
- * Create the title row with all the provided fields as column headings
- *
- * @param {Object} params Function parameters containing data, fields and delimiter
- * @returns {String} titles as a string
- */
-function createColumnTitles(params) {
-  var str = '';
+	/**
+	 * Create the title row with all the provided fields as column headings
+	 *
+	 * @param {Object} params Function parameters containing data, fields and delimiter
+	 * @returns {String} titles as a string
+	 */
+	function createColumnTitles(params) {
+	  var str = '';
 
-  //if CSV has column title, then create it
-  if (params.hasCSVColumnTitle) {
-    params.fieldNames.forEach(function (element) {
-      if (str !== '') {
-        str += params.del;
-      }
-      str += JSON.stringify(element).replace(/\"/g, params.quotes);
-    });
-  }
+	  //if CSV has column title, then create it
+	  if (params.hasCSVColumnTitle) {
+	    params.fieldNames.forEach(function (element) {
+	      if (str !== '') {
+	        str += params.del;
+	      }
+	      str += JSON.stringify(element).replace(/\"/g, params.quotes);
+	    });
+	  }
 
-  return str;
-}
+	  return str;
+	}
 
-/**
- * Replace the quotation marks of the field element if needed (can be a not string-like item)
- *
- * @param {string} stringifiedElement The field element after JSON.stringify()
- * @param {string} quotes The params.quotes value. At this point we know that is not equal to double (")
- */
-function replaceQuotationMarks(stringifiedElement, quotes) {
-  var lastCharIndex = stringifiedElement.length - 1;
+	/**
+	 * Replace the quotation marks of the field element if needed (can be a not string-like item)
+	 *
+	 * @param {string} stringifiedElement The field element after JSON.stringify()
+	 * @param {string} quotes The params.quotes value. At this point we know that is not equal to double (")
+	 */
+	function replaceQuotationMarks(stringifiedElement, quotes) {
+	  var lastCharIndex = stringifiedElement.length - 1;
 
-  //check if it's an string-like element
-  if (stringifiedElement[0] === '"' && stringifiedElement[lastCharIndex] === '"') {
-    //split the stringified field element because Strings are immutable
-    var splitElement = stringifiedElement.split('');
+	  //check if it's an string-like element
+	  if (stringifiedElement[0] === '"' && stringifiedElement[lastCharIndex] === '"') {
+	    //split the stringified field element because Strings are immutable
+	    var splitElement = stringifiedElement.split('');
 
-    //replace the quotation marks
-    splitElement[0] = quotes;
-    splitElement[lastCharIndex] = quotes;
+	    //replace the quotation marks
+	    splitElement[0] = quotes;
+	    splitElement[lastCharIndex] = quotes;
 
-    //join again
-    stringifiedElement = splitElement.join('');
-  }
+	    //join again
+	    stringifiedElement = splitElement.join('');
+	  }
 
-  return stringifiedElement;
-}
+	  return stringifiedElement;
+	}
 
-/**
- * Create the content column by column and row by row below the title
- *
- * @param {Object} params Function parameters containing data, fields and delimiter
- * @param {String} str Title row as a string
- * @returns {String} csv string
- */
-function createColumnContent(params, str) {
-  params.data.forEach(function (dataElement) {
-    //if null or empty object do nothing
-    if (dataElement && Object.getOwnPropertyNames(dataElement).length > 0) {
-      var line = '';
-      var eol = params.newLine || '\n';
+	/**
+	 * Create the content column by column and row by row below the title
+	 *
+	 * @param {Object} params Function parameters containing data, fields and delimiter
+	 * @param {String} str Title row as a string
+	 * @returns {String} csv string
+	 */
+	function createColumnContent(params, str) {
+	  params.data.forEach(function (dataElement) {
+	    //if null or empty object do nothing
+	    if (dataElement && Object.getOwnPropertyNames(dataElement).length > 0) {
+	      var line = '';
+	      var eol = params.newLine || '\n';
 
-      params.fields.forEach(function (fieldElement) {
-        var val;
+	      params.fields.forEach(function (fieldElement) {
+	        var val;
 
-        if (params.nested) {
-          val = get(dataElement, fieldElement, '');
-        } else {
-          val = dataElement[fieldElement];
-        }
+	        if (params.nested) {
+	          val = get(dataElement, fieldElement, '');
+	        } else {
+	          val = dataElement[fieldElement];
+	        }
 
-        if (val !== undefined) {
-          var stringifiedElement = JSON.stringify(val);
+	        if (val !== undefined) {
+	          var stringifiedElement = JSON.stringify(val);
 
-          if (params.quotes !== '"') {
-            stringifiedElement = replaceQuotationMarks(stringifiedElement, params.quotes);
-          }
+	          if (params.quotes !== '"') {
+	            stringifiedElement = replaceQuotationMarks(stringifiedElement, params.quotes);
+	          }
 
-          line += stringifiedElement;
-        } else if (params.defaultValue !== undefined) {
-          // Use default value if defined
-          line += JSON.stringify(params.defaultValue);
-        }
+	          line += stringifiedElement;
+	        } else if (params.defaultValue !== undefined) {
+	          // Use default value if defined
+	          line += JSON.stringify(params.defaultValue);
+	        }
 
-        line += params.del;
-      });
+	        line += params.del;
+	      });
 
-      //remove last delimeter
-      line = line.substring(0, line.length - 1);
-      line = line.replace(/\\"/g, Array(3).join(params.quotes));
-      //If header exists, add it, otherwise, print only content
-      if (str !== '') {
-        str += eol + line + params.eol;
-      } else {
-        str = line + params.eol;
-      }
-    }
-  });
+	      //remove last delimeter
+	      line = line.substring(0, line.length - 1);
+	      line = line.replace(/\\"/g, Array(3).join(params.quotes));
+	      //If header exists, add it, otherwise, print only content
+	      if (str !== '') {
+	        str += eol + line + params.eol;
+	      } else {
+	        str = line + params.eol;
+	      }
+	    }
+	  });
 
-  return str;
+	  return str;
+	}
 }
